@@ -42,10 +42,15 @@ class ScicatBot():
         token = response.json()
         print(token)
 
-    def create_room(self):
+    def create_room(self, alias, proposal_id, proposal_topic):
         """create room"""
-        url = self.url + "/createRoom?access_token=" + self.token
-        data = {"room_alias_name": "tutorial"}
+        url = self.create_url("/createRoom")
+        guests = ["@garethmurphy:synapse"]
+        data = {"room_alias_name": proposal_id,
+                "topic": proposal_topic,
+                "name": proposal_id,
+                "invite": guests}
+        print(data)
         response = requests.post(url, json=data)
         token = response.json()
         print(token)
@@ -79,10 +84,13 @@ def main():
     bot = ScicatBot()
     bot.login()
     # bot.post()
-    # bot.create_room()
-    room_id = bot.get_room_id("#tutorial:synapse")
-    username = "@garethmurphy:synapse"
-    bot.invite(room_id, username)
+    proposal_topic = "Investigation of water"
+    proposal_id = "QHK123"
+    room_alias = "#"+proposal_id+":synapse"
+    bot.create_room(room_alias, proposal_id, proposal_topic)
+    # room_id = bot.get_room_id(room_alias)
+    # username = "@garethmurphy:synapse"
+    # bot.invite(room_id, username)
 
 
 if __name__ == "__main__":
