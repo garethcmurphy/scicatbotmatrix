@@ -28,11 +28,9 @@ class ScicatBot():
         token = response.json()
         self.token = token["access_token"]
 
-    def post(self):
+    def post(self, room_id):
         """post"""
-        roomid = "!vbGjwTjpOplTnnLFZR:synapse"
-
-        url = self.url + "/rooms/"+roomid+"/send/m.room.message?access_token=" + self.token
+        url = self.create_url("/rooms/"+room_id + "/send/m.room.message")
         filename = "nicos_00000788.hdf"
         scicat_url = "https://scicat.esss.se/datasets/20.500.12269%2F788nicos_00000788.hdf"
         data = {"msgtype": "m.text", "body": "The file " + filename +
@@ -87,8 +85,9 @@ def main():
     proposal_topic = "Investigation of water"
     proposal_id = "QHK123"
     room_alias = "#"+proposal_id+":synapse"
-    bot.create_room(room_alias, proposal_id, proposal_topic)
-    # room_id = bot.get_room_id(room_alias)
+    # bot.create_room(room_alias, proposal_id, proposal_topic)
+    room_id = bot.get_room_id(room_alias)
+    bot.post(room_id)
     # username = "@garethmurphy:synapse"
     # bot.invite(room_id, username)
 
