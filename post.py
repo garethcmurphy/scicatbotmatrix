@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """scicatbot"""
+import os
+
 import urllib
 import json
 import requests
@@ -7,7 +9,9 @@ import requests
 
 class ScicatBot():
     """scicatbot"""
-    url = "https://scitest.esss.lu.se/_matrix/client/r0"
+    base_url = "https://scitest.esss.lu.se/_matrix"
+    url = base_url + "/client/r0"
+    media_url = base_url + "/media/r0"
     username = ""
     password = ""
 
@@ -39,6 +43,39 @@ class ScicatBot():
         response = requests.post(url, json=data)
         token = response.json()
         print(token)
+
+    def upload_image(self):
+        """post"""
+        filename = "im.png"
+        media_url = self.media_url + "/upload?filename=im.png&access_token=" + self.token
+        stats= os.stat(filename)
+
+        headers = {"Content-Type": "image/png", 
+        "Content-Length": str(stats.st_size)}
+        files =  open('im.png', 'rb').read()
+        response = requests.post(media_url, data=files, headers=headers)
+        print(response.json())
+        print(media_url)
+
+    def post_image(self, room_id):
+
+        url = self.create_url("/rooms/"+room_id + "/send/m.room.message")
+        data = {"msgtype": "m.image",
+        "body" : "plot of data",
+         'url': 'mxc://synapse/impshuwSHfeyyqJwODZxdcRf'}
+
+        response = requests.post(url, json=data)
+        token = response.json()
+        print(token)
+
+    def upload(self, file):
+        """upload"""
+        url = self.create_url("/upload")
+        headers = {'Content-type': 'image/png'}
+        data = {}
+        response = requests.post(url, headers=headers, json=data)
+        response_json = response.json()
+        print(response_json)
 
     def create_room(self, alias, proposal_id, proposal_topic):
         """create room"""
@@ -87,7 +124,8 @@ def main():
     room_alias = "#"+proposal_id+":synapse"
     # bot.create_room(room_alias, proposal_id, proposal_topic)
     room_id = bot.get_room_id(room_alias)
-    bot.post(room_id)
+    #bot.upload_image()
+    bot.post_image(room_id)
     # username = "@garethmurphy:synapse"
     # bot.invite(room_id, username)
 
